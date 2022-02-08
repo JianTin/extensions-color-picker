@@ -15,7 +15,6 @@ function getPixelInfo(){
         chrome.tabs.query({active: true, windowId: Number(contentWindowId)}, (tabs)=>{
             const {windowId, height, width} = tabs[0]
             chrome.tabs.captureVisibleTab(windowId,(dataUri)=>{
-                console.log(dataUri)
                 res({
                     type: 'captureTab', message: {dataUri, width, height}
                 })

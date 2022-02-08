@@ -40,7 +40,7 @@ function initBind(){
     const resizeFn = debounce(getCaptureVisible, 1000)
     const moveEvent: (ev: MouseEvent)=>void = ({clientX, clientY})=>{
         if(captureCanvas2d && amplifierCanvas2d) {
-           const docElement = document.documentElement
+            const docElement = document.documentElement
             // 放大器 操作
                 //移动
             amplifierCanvas!.style.left = clientX + docElement.scrollLeft + 10 + 'px'
@@ -93,19 +93,24 @@ function getCaptureVisible(){
         canvas.height = height as number
         captureCanvas = canvas
         const image = new Image()
+        image.width = width as number
+        image.height = height as number
         image.src = dataUri
         image.onload = function(){
             captureCanvas2d = canvas.getContext('2d')
-            captureCanvas2d?.drawImage(image, 0, 0)
+            captureCanvas2d?.drawImage(image, 0, 0, width, height)
         }
+        document.body.appendChild(image)
+        document.body.appendChild(canvas)
     })
 }
 
 chrome.runtime.onMessage.addListener(({type, message})=>{
     if(type === 'currentWindowId') {
         currentWindowId = message
-        initElement()
+        // 截图
         getCaptureVisible()
+        initElement()
         initBind()
     }
 })

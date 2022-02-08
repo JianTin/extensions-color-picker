@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react"
 import './index.less'
 
+const notExtensions = ['chrome.google.com', 'chrome://']
 export default function(){
     const pickerRef = useRef<string>('#ffffff')
     const [,update] = useState({})
@@ -29,8 +30,15 @@ export default function(){
         })
     }
 
+    function isDisable(){
+        return notExtensions.includes(window.location.href)
+    }
+
     return <div style={{width: '300px', height: '200px'}}>
-        <button onClick={get}>get color</button>
+        {/* <button onClick={get} disabled={isDisable()} >{
+            isDisable() ? 'current page not work' : 'get color'
+        }</button> */}
+        <button onClick={get} >get color</button>
         <div className="picker-outer">
             <div className="picker" style={{background: pickerRef.current}}></div>
             <div className="picker-text">{pickerRef.current}</div>
