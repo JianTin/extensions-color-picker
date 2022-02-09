@@ -1,9 +1,12 @@
 import React, { useEffect, useRef, useState } from "react"
 import './index.less'
+import {Utils} from 'rough-react-utils'
 
-const notExtensions = ['chrome.google.com', 'chrome://']
+const {urlRunExtensions} = Utils
+
 export default function(){
     const pickerRef = useRef<string>('#ffffff')
+    const [isRun, setIsRun] = useState<boolean>(true)
     const [,update] = useState({})
 
     useEffect(()=>{
@@ -13,6 +16,7 @@ export default function(){
                 update({})
             }
         })
+        urlRunExtensions([], setIsRun)
     }, [])
 
     function get(){
@@ -30,15 +34,10 @@ export default function(){
         })
     }
 
-    function isDisable(){
-        return notExtensions.includes(window.location.href)
-    }
-
     return <div style={{width: '300px', height: '200px'}}>
-        {/* <button onClick={get} disabled={isDisable()} >{
-            isDisable() ? 'current page not work' : 'get color'
-        }</button> */}
-        <button onClick={get} >get color</button>
+        <button onClick={get} disabled={!isRun} >{
+            isRun ? 'get color' : 'current page not work'
+        }</button>
         <div className="picker-outer">
             <div className="picker" style={{background: pickerRef.current}}></div>
             <div className="picker-text">{pickerRef.current}</div>
