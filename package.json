@@ -29,7 +29,7 @@
     "lodash-es": "^4.17.21",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "rough-react-utils": "^1.0.9",
+    "rough-react-utils": "^1.0.91",
     "vue": "^3.2.26"
   }
 }

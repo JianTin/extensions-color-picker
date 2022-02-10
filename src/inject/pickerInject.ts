@@ -13,7 +13,10 @@ let captureCanvas2d: CanvasRenderingContext2D | null = null
 // 放大镜 canvas
 let amplifierCanvas: HTMLCanvasElement | null  = null
 let amplifierCanvas2d: CanvasRenderingContext2D | null = null
+// 保持清除 操作（dom、event）
+let clear: Function | null = null;
 
+// 创造element
 function initElement(){
     // 展示栏 outer
     bottomReadOuter = document.createElement('div')
@@ -32,6 +35,14 @@ function initElement(){
     amplifierCanvas.classList.add('amplifier')
     amplifierCanvas2d = amplifierCanvas.getContext('2d')
     document.body.appendChild(amplifierCanvas)
+}
+
+// 控制element的display
+function elementDisplay(val: 'none' | 'block'){
+    if(bottomReadOuter && amplifierCanvas){
+        bottomReadOuter.style.display = val
+        amplifierCanvas.style.display = val
+    }
 }
 
 // 绑定 鼠标移动时的颜色
@@ -58,6 +69,7 @@ function initBind(){
         }
     }
     const clickEvent = ()=>{
+        clear = null
         // 取消绑定事件
         document.removeEventListener('mousemove', moveEvent)
         document.removeEventListener('click', clickEvent)
@@ -79,10 +91,12 @@ function initBind(){
     // 点击，移除 和 获取当前像素
     document.addEventListener('click', clickEvent)
     window.addEventListener('resize', resizeFn)
+    return clickEvent
 }
 
-// 发送 message，创建canvas
+// 发送 message，截图
 function getCaptureVisible(){
+    elementDisplay('none')
     chrome.runtime.sendMessage({
         type: 'runtime',
         message: currentWindowId
@@ -100,17 +114,16 @@ function getCaptureVisible(){
             captureCanvas2d = canvas.getContext('2d')
             captureCanvas2d?.drawImage(image, 0, 0, width, height)
         }
-        document.body.appendChild(image)
-        document.body.appendChild(canvas)
+        elementDisplay('block')
     })
 }
 
 chrome.runtime.onMessage.addListener(({type, message})=>{
+    if(clear) clear();
     if(type === 'currentWindowId') {
         currentWindowId = message
-        // 截图
-        getCaptureVisible()
         initElement()
-        initBind()
+        getCaptureVisible()
+        clear = initBind()
     }
 })
